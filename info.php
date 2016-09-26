@@ -1,4 +1,5 @@
 <?php 
-phpinfo()
+echo 'bsdas';
+phpinfo();
 echo 'aasaa';
 ;>
