@@ -1,4 +1,5 @@
 <?php 
 phpinfo()
-echo 'aasaa';
+echo 'Hello';
+var_dump($_SERVER);
 ;>
