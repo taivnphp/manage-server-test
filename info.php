@@ -1,5 +1,5 @@
 <?php 
 phpinfo()
-echo 'Hello';
+echo 'Hello edit';
 var_dump($_SERVER);
 ;>
