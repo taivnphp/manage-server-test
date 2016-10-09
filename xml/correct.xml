@@ -1,0 +1,15 @@
+<ppml title="free" last_free_valid="no" debit_link="SLOPES">
+    <input_conditions>
+        <default_day>
+            <default_slot>
+                <output_condition tariff="T1"/>
+            </default_slot>
+        </default_day>
+    </input_conditions>
+    <lists/>
+    <pricing>
+        <tariff  tariff="T1">
+            <free/>
+        </tariff>
+    </pricing>
+</ppml>

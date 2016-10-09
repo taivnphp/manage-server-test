@@ -1,4 +1,5 @@
 <?php 
+/*
 use ElephantIO\Client as Elephant;
 
 $elephant = new Elephant('http://localhost:8000', 'socket.io', 1, false, true, true);
@@ -13,4 +14,13 @@ $elephant->send(
 $elephant->close();
 
 echo 'tryin to send `bar` to the event `foo`';
+*/
+
+
+
+//use DOMDocument;
+//use DOMImplementation;
+phpinfo();
+echo 'abc';
+$dom = new DOMDocument;
 ?>

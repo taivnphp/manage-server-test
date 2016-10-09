@@ -1,0 +1,130 @@
+<ppml title="Saumur Vert 1.0" debit_link="SLOPES">  
+  <products_sale_dates>
+      <weekly week_day="MO_SAT">
+        <slot from="8" to="22">
+          <user values="1">           
+          <product ref="Evening"/>            
+          </user>
+          <user values="5">            
+            <product ref="Evening"/>
+          </user>
+        </slot>
+        <default_slot>
+          <user values="1">
+            <product ref="Dagkaart"/>
+            <product ref="Weekkaart"/>
+            <product ref="Maandkaart"/>
+          </user>
+          <user values="5">
+            <product ref="Dagkaart"/>
+            <product ref="Weekkaart"/>
+            <product ref="Maandkaart"/>
+          </user>
+        </default_slot>
+      </weekly>
+    </products_sale_dates>
+	<input_conditions>
+          <weekly week_day="SUNDAY">
+            <slot from="0" to="2400">
+              <user values="1">
+                <output_condition tariff="Gratuit"/>
+              </user>
+              <user values="5">
+                <output_condition tariff="Gratuit"/>
+              </user>
+            </slot>
+          </weekly>
+          <default_day>
+            <slot from="0000" to="0900">
+              <user values="1">
+                <output_condition tariff="Gratuit"/>
+              </user>
+              <user values="5">
+                <output_condition tariff="Gratuit"/>
+              </user>
+            </slot>
+            <slot from="0900" to="1200">
+              <user values="1">
+                <output_condition tariff="T6"/>
+              </user>
+              <user values="5">
+                <output_condition tariff="T7"/>
+              </user>
+            </slot>
+            <slot from="1200" to="1400">
+              <user values="1">
+                <output_condition tariff="Gratuit"/>
+              </user>
+              <user values="5">
+                <output_condition tariff="Gratuit"/>
+              </user>
+            </slot>
+            <slot from="1400" to="1900">
+              <user values="1">
+                <output_condition tariff="T6"/>
+              </user>
+              <user values="5">
+                <output_condition tariff="T7"/>
+              </user>
+            </slot>
+            <slot from="1900" to="2400">
+              <user values="1">
+                <output_condition tariff="Gratuit"/>
+              </user>
+              <user values="5">
+                <output_condition tariff="Gratuit"/>
+              </user>
+            </slot>
+          </default_day>
+        </input_conditions>
+  <pricing>
+    <tariff tariff="T6">
+      <min value="20"/>
+      <max value="400"/>
+      <min_extend value="20"/>
+      <debit value="10"/>
+      <overpay value="400"/>
+      <stairway value="20" duration="00003000"/>
+      <stairway value="30" duration="00003700"/>
+      <stairway value="40" duration="00004500"/>
+      <stairway value="50" duration="00005200"/>
+      <stairway value="60" duration="00010000"/>
+      <stairway value="70" duration="00010700"/>
+      <stairway value="80" duration="00011500"/>
+      <stairway value="100" duration="00013000"/>
+      <stairway value="120" duration="00014500"/>
+      <stairway value="140" duration="00020000"/>
+      <stairway value="160" duration="00021500"/>
+      <stairway value="200" duration="00031500"/>
+      <stairway value="240" duration="00041500"/>
+      <stairway value="280" duration="00051500"/>
+      <stairway value="320" duration="00061500"/>
+      <stairway value="400" duration="00081500"/>
+    </tariff>
+    <tariff tariff="T7">
+      <min value="20"/>
+      <max value="300"/>
+      <min_extend value="20"/>
+      <debit value="10"/>
+      <overpay value="300"/>
+      <stairway value="20" duration="00003500"/>
+      <stairway value="30" duration="00004500"/>
+      <stairway value="40" duration="00005500"/>
+      <stairway value="50" duration="00010500"/>
+      <stairway value="60" duration="00011500"/>
+      <stairway value="70" duration="00012500"/>
+      <stairway value="80" duration="00013500"/>
+      <stairway value="100" duration="00015500"/>
+      <stairway value="120" duration="00021500"/>
+      <stairway value="150" duration="00031500"/>
+      <stairway value="180" duration="00041500"/>
+      <stairway value="210" duration="00051500"/>
+      <stairway value="240" duration="00061500"/>
+      <stairway value="270" duration="00071500"/>
+      <stairway value="300" duration="00081500"/>
+    </tariff>
+    <tariff tariff="Gratuit">
+      <free/>
+    </tariff>
+  </pricing>
+</ppml>

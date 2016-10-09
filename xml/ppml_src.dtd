@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--                   Parking Pricing Markup Language                       -->
+<!--              Copyright Parkeon, 2006 All rights reserved.               -->
+<!-- All reference to this DTD must be done by using the following FPI:
+		-//PARKEON//DTD Parking Pricing V1.8//EN                            -->
+<!-- This reference will be used for serializing the tariff data in WBXML     -->
+<!ENTITY % integer "NMTOKEN">
+<!ENTITY % string "CDATA">
+<!-- Additional rule: format is autoadaptative as describe bellow
+	h if 1 digit
+	hh if 2 digits
+	hmm if 3 digits
+	hhmm if 4 digits
+	hmmss if 5 digits
+	hhmmss if 6 digits
+	dhhmmss if 7 digits
+	ddhhmmss if 8 digits
+-->
+<!ENTITY % time "%integer;">
+<!-- Additional rule: format is autoadaptative as describe bellow
+	ddmm if 4 digits
+	ddmmyy if 6 digits
+	ddmmyyyy if 8 digits
+-->
+<!ENTITY % date "%integer;">
+<!ENTITY % currency "(NATIONAL | EURO)">
+<!ENTITY % yes_no "(yes | no)">
+<!ENTITY % version "NMTOKEN">
+<!ELEMENT ppml (products_sale_dates?, input_conditions?, products?, lists?, pricing?)>
+
+<!-- vat_rate represent the VAT percent applied to this tariff (a float value in percent) -->
+<!ATTLIST ppml
+	title %string; #IMPLIED
+	version %version; #IMPLIED
+	currency %currency; #IMPLIED
+	slope_reprise %yes_no; #IMPLIED
+	last_free_valid %yes_no; #IMPLIED
+	freetime_milestone %time; #IMPLIED
+	debit_link (NONE | SLOPES) #IMPLIED
+	vat_rate %string; #IMPLIED
+>
+<!ENTITY % repeating.class "((weekly | monthly_on_date | yearly_on_date | on_day | dayslist | default_day)*)">
+<!ELEMENT input_conditions %repeating.class;>
+<!ENTITY % week_day_ex "( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY | MO_FRI | MO_SAT )">
+<!ENTITY % first_paying_day.class "(first_paying_day?)">
+<!ENTITY % slot.class "(slot*, default_slot?)">
+<!ENTITY % all_slots.class "(%first_paying_day.class; , %slot.class;)">
+<!ELEMENT weekly %all_slots.class;>
+<!ATTLIST weekly
+	week_day %week_day_ex; "MO_SAT"
+	from %date; #IMPLIED
+	to %date; #IMPLIED
+>
+<!ELEMENT monthly_on_date %all_slots.class;>
+<!ATTLIST monthly_on_date
+	month_day %integer; #REQUIRED
+	from %date; #IMPLIED
+	to %date; #IMPLIED
+>
+<!ELEMENT yearly_on_date %all_slots.class;>
+<!ATTLIST yearly_on_date
+	on %date; #REQUIRED
+	from %date; #IMPLIED
+	to %date; #IMPLIED
+>
+<!ENTITY % week_day "( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY )">
+<!ENTITY % day_number "(1st | 2nd | 3rd | 4th | last )">
+<!ELEMENT on_day %all_slots.class;>
+<!ATTLIST on_day
+	week_day %week_day; #REQUIRED
+	week_day_num %day_number; #REQUIRED
+	month %integer; #IMPLIED
+	from %date; #IMPLIED
+	to %date; #IMPLIED
+>
+<!ELEMENT dayslist %all_slots.class;>
+<!ATTLIST dayslist
+	list_id IDREF #REQUIRED
+	from %date; #IMPLIED
+	to %date; #IMPLIED
+>
+<!ELEMENT default_day %all_slots.class;>
+<!ATTLIST default_day
+	from %date; #IMPLIED
+	to %date; #IMPLIED
+>
+<!ELEMENT first_paying_day %slot.class;>
+<!ENTITY % condition_type.class "( user | area | place | payment_means )">
+<!ENTITY % output_type.class "(reject_payment | output_condition)">
+<!ENTITY % condition.class "((%condition_type.class;)*, (product)*, (%output_type.class;)?)">
+<!ELEMENT slot %condition.class;>
+<!ATTLIST slot
+	from %time; #REQUIRED
+	to %time; #REQUIRED
+>
+<!ELEMENT default_slot %condition.class;>
+<!ELEMENT user %condition.class;>
+<!ATTLIST user
+	values %string; #REQUIRED
+>
+<!ELEMENT area %condition.class;>
+<!ATTLIST area
+	from %integer; #REQUIRED
+	to %integer; #IMPLIED
+>
+<!ELEMENT place %condition.class;>
+<!ATTLIST place
+	from %integer; #REQUIRED
+	to %integer; #IMPLIED
+>
+<!ELEMENT payment_means %condition.class;>
+<!ATTLIST payment_means
+	coin %yes_no; #IMPLIED
+	note %yes_no; #IMPLIED
+	card %yes_no; #IMPLIED
+	phone %yes_no; #IMPLIED
+	custom %string; #IMPLIED
+>
+<!ELEMENT reject_payment EMPTY>
+<!ATTLIST reject_payment
+	cause %string; #IMPLIED
+>
+<!ENTITY % free_time_limit "( NONE | ONCE_DAY | TWICE_DAY )">
+<!ELEMENT output_condition EMPTY>
+<!ATTLIST output_condition
+	tariff IDREF #REQUIRED
+	free_time %time; #IMPLIED
+	free_time_limit %free_time_limit; #IMPLIED
+	fbd_alwd_amounts %string; #IMPLIED
+	message %string; #IMPLIED
+	ticket %string; #IMPLIED
+	coupon %string; #IMPLIED
+	custom %string; #IMPLIED
+>
+<!ELEMENT product EMPTY>
+<!-- List of all defined products -->
+<!ATTLIST product ref IDREF #REQUIRED
+>
+<!ELEMENT products_sale_dates %repeating.class;>
+<!-- Description of the dates/users/area... that defines restriction of products availability -->
+
+<!ELEMENT products (pass*, fine*)>
+<!-- Products can be of 2 kinds : pass (fixed duration and fixed amount) and fine (fixed price and grace period) -->
+<!ATTLIST products >
+
+<!ELEMENT pass (tag*, compute_if_already_consumed?, quantity?, overpay?, start_date, duration, amount, vat_rate?, need_identification*, deliverable*)>
+<!ATTLIST pass
+	name ID #REQUIRED
+>
+<!ELEMENT permit (tag*, quantity?, overpay?, start_date, duration, amount, vat_rate?, need_identification*, deliverable*)>
+<!ATTLIST permit
+	name ID #REQUIRED
+>
+<!ELEMENT fine (tag*, amount, vat_rate?, deliverable*, need_identification*, grace_delay?, overpay?, fine_type?)>
+<!ATTLIST fine
+	name ID #REQUIRED
+>
+<!ELEMENT fine_type EMPTY>
+<!ATTLIST fine_type
+	value %integer; #IMPLIED
+>
+<!ELEMENT grace_delay EMPTY>
+	<!ATTLIST grace_delay
+	iso8601 %string; #IMPLIED
+>
+<!ELEMENT tag EMPTY>
+<!ATTLIST tag
+	name %string; #REQUIRED
+	value %string; #REQUIRED
+>
+<!ELEMENT compute_if_already_consumed EMPTY>
+<!ATTLIST compute_if_already_consumed
+	percent %string; #REQUIRED
+>
+<!ELEMENT quantity EMPTY>
+<!ATTLIST quantity
+	min %string; #REQUIRED
+	max %string; #REQUIRED
+	default %string; #REQUIRED
+	editable %string; #IMPLIED
+	auto_renewable %string; #IMPLIED
+>
+<!ELEMENT start_date (frequency)>
+<!ATTLIST start_date
+	editable %string; #IMPLIED
+>
+<!ELEMENT frequency EMPTY>
+<!ATTLIST frequency
+	icalendar %string; #REQUIRED
+>
+<!ELEMENT duration EMPTY>
+<!-- duration is the basic format of the iso8601 : PnnYnnMnnDTnnHnnMnnS <br>
+where Y is number of years <br>
+	M is number of months <br>
+	D is number of days <br>
+	T the separator for time <br>
+	H, M, S number of hours, minutes,seconds-->
+<!ATTLIST duration
+	iso8601 %string; #IMPLIED
+>
+<!ELEMENT amount EMPTY>
+<!ATTLIST amount
+	value %integer; #REQUIRED
+>
+
+<!ELEMENT vat_rate (#PCDATA)>
+
+<!ELEMENT deliverable EMPTY>
+<!-- support is for the type of deliverable : <br>
+		* server : eticket, template can be "prm", "parkreg", "prdb"... <br>
+		* printer : paper ticket, template is a file (wbxml of text) <br>
+		* external_id is for PRDB <br>
+		* printing_mode is available only for 'printer' support<br>
+-->
+<!ATTLIST deliverable
+	support (server|printer|screen) #REQUIRED
+	template %string; #REQUIRED
+	external_id %string; #IMPLIED
+	printing_mode (always|ask) #IMPLIED
+>
+<!ELEMENT need_identification EMPTY>
+<!-- Not yet used : will describe the needed identifications to sell products/tariff-->
+<!ATTLIST need_identification
+	value (plate|place|fine) #REQUIRED
+>
+<!ELEMENT lists ((list_amount_fbd_alwd | days_list)*)>
+<!ELEMENT list_amount_fbd_alwd (amount_allowed+ | amount_forbidden+)>
+<!ATTLIST list_amount_fbd_alwd
+	list_name %string; #REQUIRED
+>
+<!ELEMENT amount_allowed EMPTY>
+<!ATTLIST amount_allowed
+	value %integer; #REQUIRED
+>
+<!ELEMENT amount_forbidden EMPTY>
+<!ATTLIST amount_forbidden
+	value %integer; #REQUIRED
+>
+<!ELEMENT days_list (day_range+)>
+<!ATTLIST days_list
+	list_name ID #REQUIRED
+>
+<!ELEMENT day_range EMPTY>
+<!ATTLIST day_range
+	from %date; #REQUIRED
+	to %date; #IMPLIED
+>
+<!ENTITY % slope.class "((proportional | stairway | repeat_slopes)*, (flat | repeat_flats)*)">
+<!ENTITY % tarentry.class "(min | min_extend | (max | max_time) | max_time_by_law | debit | debit_time | overpay | default_paid | rotating)*">
+<!ENTITY % paying.class "(%tarentry.class;, (free | %slope.class;), deliverable*)">
+<!ENTITY % tariff.class "(%paying.class; | blocking)">
+<!ELEMENT pricing (tariff+)>
+<!ENTITY % debit_link "( NONE | AUTH_AMOUNT )">
+<!ELEMENT tariff %tariff.class;>
+<!ATTLIST tariff
+	tariff ID #REQUIRED
+	tariff_link IDREF #IMPLIED
+	debit_link %debit_link; #IMPLIED
+>
+<!ELEMENT free EMPTY>
+<!ELEMENT min EMPTY>
+<!ATTLIST min
+	value %integer; #REQUIRED
+>
+<!ELEMENT min_extend EMPTY>
+<!ATTLIST min_extend
+	value %integer; #REQUIRED
+>
+<!ELEMENT max EMPTY>
+<!ATTLIST max
+	value %integer; #REQUIRED
+>
+<!ELEMENT max_time EMPTY>
+<!ATTLIST max_time
+	value %time; #REQUIRED
+>
+<!ELEMENT max_time_by_law EMPTY>
+<!ATTLIST max_time_by_law
+	value %time; #REQUIRED
+>
+<!ELEMENT debit EMPTY>
+<!ATTLIST debit
+	value %integer; #REQUIRED
+>
+<!ELEMENT debit_time EMPTY>
+<!ATTLIST debit_time
+	value %time; #REQUIRED
+>
+<!ELEMENT overpay EMPTY>
+<!ATTLIST overpay
+	value %integer; #REQUIRED
+>
+<!ELEMENT default_paid EMPTY>
+<!ATTLIST default_paid
+	value %integer; #IMPLIED
+	duration %time; #IMPLIED
+>
+<!ELEMENT rotating EMPTY>
+<!ATTLIST rotating
+	duration %time; #REQUIRED
+	forced %yes_no; #IMPLIED
+>
+<!ELEMENT repeat_slopes ((proportional | stairway)+)>
+<!ATTLIST repeat_slopes
+	nb_times %integer; #REQUIRED
+>
+<!ENTITY % flat_validity "( In_Slot | Before_Or_In_Slot )">
+<!ELEMENT repeat_flats (flat+)>
+<!ATTLIST repeat_flats
+	nb_times %integer; #REQUIRED
+	time_added %time; #REQUIRED
+	value_added %integer; #IMPLIED
+	valid_if %flat_validity; #IMPLIED
+>
+<!ELEMENT proportional EMPTY>
+<!ATTLIST proportional
+	value %integer; #REQUIRED
+	duration %time; #REQUIRED
+>
+<!ELEMENT stairway EMPTY>
+<!ATTLIST stairway
+	value %integer; #REQUIRED
+	duration %time; #REQUIRED
+>
+<!ENTITY % flat_from "( First_paying_day | Next_day | End_Slot | Current_time)">
+<!ELEMENT flat EMPTY>
+<!ATTLIST flat
+	value %integer; #REQUIRED
+	time_added %time; #IMPLIED
+	added_from %flat_from; #IMPLIED
+	valid_if %flat_validity; #IMPLIED
+>
+<!ELEMENT blocking EMPTY>
